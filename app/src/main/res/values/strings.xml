@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Android_ShopListProduct</string>
+    <string name="create_list_product_button">Создать свой список продуктов магазина</string>
+    <string name="hint_name_product_text_view">Название</string>
+    <string name="hint_price_text_view">цена</string>
+    <string name="save_btn">Добавить</string>
+    <string name="name_priduct_edit_text">Название продукта</string>
+    <string name="exit">Выход</string>
 </resources>
