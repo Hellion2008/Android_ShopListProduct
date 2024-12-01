@@ -3,6 +3,7 @@ package ru.urban.android_shoplistproduct
 import android.app.ComponentCaller
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -77,11 +78,17 @@ class ShopListProductActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
+            if (bitmap == null) {
+                bitmap = BitmapFactory.decodeResource(resources, R.drawable.ic_unknown_product)
+            }
+
             val product = Product(
                 nameProductET.text.toString(),
                 priceProductET.text.toString(),
                 bitmap)
+
             products.add(product)
+            bitmap = null
 
             val adapter = ListAdapter(this@ShopListProductActivity, products)
             listViewLV.adapter = adapter
@@ -97,11 +104,11 @@ class ShopListProductActivity : AppCompatActivity() {
     override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
-        data: Intent?,
-        caller: ComponentCaller
+        data: Intent?
     ) {
-        super.onActivityResult(requestCode, resultCode, data, caller)
+        super.onActivityResult(requestCode, resultCode, data)
         mainImageViewIV = findViewById(R.id.mainImageViewIV)
+        mainImageViewIV.setImageResource(R.drawable.ic_unknown_product)
         when (requestCode){
             GALLERY_REQUEST -> if (resultCode === RESULT_OK){
                 val selectedImage : Uri? = data?.data
