@@ -6,4 +6,6 @@
     <string name="save_btn">Добавить</string>
     <string name="name_priduct_edit_text">Название продукта</string>
     <string name="exit">Выход</string>
+    <string name="hint_price_edit_text">Цена продукта</string>
+    <string name="hint_product_description_edit_text">Описание продукта</string>
 </resources>

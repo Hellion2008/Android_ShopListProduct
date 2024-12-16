@@ -1,6 +1,7 @@
 package ru.urban.android_shoplistproduct
 
 import android.content.Context
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +25,7 @@ class ListAdapter (context: Context, productList: MutableList<Product>) :
         val nameProduct = view?.findViewById<TextView>(R.id.nameProductTV)
         val priceProduct = view?.findViewById<TextView>(R.id.priceProductTV)
 
-        imageView?.setImageBitmap(product?.image)
+        imageView?.setImageURI(Uri.parse(product?.image))
         nameProduct?.text = product?.name
         priceProduct?.text = product?.price
 

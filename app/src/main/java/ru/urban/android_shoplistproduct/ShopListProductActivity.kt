@@ -1,35 +1,39 @@
 package ru.urban.android_shoplistproduct
 
-import android.app.ComponentCaller
 import android.content.Intent
+import android.content.res.Resources
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.AdapterView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.ListView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.core.text.isDigitsOnly
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import java.io.File
 import java.io.IOException
 
-class ShopListProductActivity : AppCompatActivity() {
+class ShopListProductActivity : AppCompatActivity(), Removable, Updateble {
 
     private val GALLERY_REQUEST = 302
 
-    var bitmap: Bitmap? = null
+    var photoUri: Uri? = null
+
+    var item: Int? = null
+    var isProductChange: Boolean = true
 
     private lateinit var toolbarMain: Toolbar
 
@@ -40,6 +44,7 @@ class ShopListProductActivity : AppCompatActivity() {
     private lateinit var saveBTN: Button
 
     private lateinit var listViewLV: ListView
+    private lateinit var adapter: ListAdapter
 
     private val products: MutableList<Product> = mutableListOf()
 
@@ -64,43 +69,36 @@ class ShopListProductActivity : AppCompatActivity() {
 
         listViewLV = findViewById(R.id.listViewLV)
 
-        mainImageViewIV.setOnClickListener{
+        mainImageViewIV.setOnClickListener {
             val photoPickerIntent = Intent(Intent.ACTION_PICK)
             photoPickerIntent.type = "image/*"
             startActivityForResult(photoPickerIntent, GALLERY_REQUEST)
         }
 
-        saveBTN.setOnClickListener{
+        saveBTN.setOnClickListener {
 
             if (nameProductET.text.isEmpty() || priceProductET.text.isEmpty())
                 return@setOnClickListener
 
-            if (!priceProductET.text.isDigitsOnly()){
+            if (!priceProductET.text.isDigitsOnly()) {
                 Toast.makeText(this, "Цена не в цифрах", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
 
-            if (bitmap == null) {
-                val vectorDrawable = ContextCompat.getDrawable(this, R.drawable.ic_unknown_product)
-                bitmap = Bitmap.createBitmap(
-                    vectorDrawable!!.intrinsicWidth,
-                    vectorDrawable.intrinsicHeight,
-                    Bitmap.Config.ARGB_8888
-                )
-                val canvas = Canvas(bitmap!!)
-                vectorDrawable.setBounds(0, 0, canvas.width, canvas.height)
-                vectorDrawable.draw(canvas)
+            if (photoUri == null) {
+
             }
 
             val product = Product(
                 nameProductET.text.toString(),
                 priceProductET.text.toString(),
-                bitmap)
+                photoUri.toString()
+            )
 
             products.add(product)
-            bitmap = null
+            photoUri = null
 
-            val adapter = ListAdapter(this@ShopListProductActivity, products)
+            adapter = ListAdapter(this@ShopListProductActivity, products)
             listViewLV.adapter = adapter
             adapter.notifyDataSetChanged()
 
@@ -109,6 +107,17 @@ class ShopListProductActivity : AppCompatActivity() {
             mainImageViewIV.setImageResource(R.drawable.ic_unknown_product)
 
         }
+
+        listViewLV.onItemClickListener =
+            AdapterView.OnItemClickListener { parent, view, position, id ->
+                val product = adapter.getItem(position)
+                item = position
+                val dialog = MyDialog()
+                val args = Bundle()
+                args.putParcelable("product", product)
+                dialog.arguments = args
+                dialog.show(supportFragmentManager, "custom")
+            }
     }
 
     override fun onActivityResult(
@@ -119,18 +128,13 @@ class ShopListProductActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         mainImageViewIV = findViewById(R.id.mainImageViewIV)
         mainImageViewIV.setImageResource(R.drawable.ic_unknown_product)
-        when (requestCode){
-            GALLERY_REQUEST -> if (resultCode === RESULT_OK){
-                val selectedImage : Uri? = data?.data
+        when (requestCode) {
+            GALLERY_REQUEST -> if (resultCode === RESULT_OK) {
+                photoUri = data?.data
 
-                try {
-                    bitmap = MediaStore.Images.Media.getBitmap(contentResolver, selectedImage)
-                } catch (e: IOException){
-                    print(e.stackTrace)
-                }
-
-                mainImageViewIV.setImageBitmap(bitmap)
+                mainImageViewIV.setImageURI(photoUri)
             }
+
             else -> mainImageViewIV.setImageResource(R.drawable.ic_unknown_product)
         }
     }
@@ -142,7 +146,7 @@ class ShopListProductActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId){
+        when (item.itemId) {
             R.id.exitMenuMain -> {
                 Toast.makeText(
                     applicationContext,
@@ -153,5 +157,18 @@ class ShopListProductActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun remove(product: Product) {
+        adapter.remove(product)
+    }
+
+    override fun update(product: Product) {
+        val intent = Intent(this, DetailsProductActivity::class.java)
+        intent.putExtra("product", product)
+//        intent.putExtra("products", this.products as ArrayList<Product>)
+//        intent.putExtra("position", item)
+//        intent.putExtra("check", isProductChange)
+        startActivity(intent)
     }
 }

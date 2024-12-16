@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    tools:context=".DetailsProductActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="Магазин"
+        app:titleTextColor="@color/white"
+        android:background="@color/mediumPurple"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/detailImageProductIV"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:padding="12dp"
+        android:src="@drawable/ic_unknown_product" />
+
+    <EditText
+        android:id="@+id/detailNameProductET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:padding="12dp"
+        android:hint="@string/name_priduct_edit_text"/>
+
+    <EditText
+        android:id="@+id/detailPriceProductET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20dp"
+        android:padding="12dp"
+        android:hint="@string/hint_price_edit_text"/>
+
+    <EditText
+        android:id="@+id/detailDescriptionProductET"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="14dp"
+        android:padding="12dp"
+        android:hint="@string/hint_product_description_edit_text"/>
+</LinearLayout>
