@@ -8,4 +8,6 @@
     <string name="exit">Выход</string>
     <string name="hint_price_edit_text">Цена продукта</string>
     <string name="hint_product_description_edit_text">Описание продукта</string>
+    <string name="name_text_save_button">Сохранить</string>
+    <string name="menu_text_back">Назад</string>
 </resources>

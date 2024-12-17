@@ -1,5 +1,6 @@
 package ru.urban.android_shoplistproduct
 
+import android.app.Activity
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
@@ -16,6 +17,7 @@ import android.widget.ImageView
 import android.widget.ListView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
@@ -25,6 +27,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import java.io.File
 import java.io.IOException
+import kotlin.system.exitProcess
 
 class ShopListProductActivity : AppCompatActivity(), Removable, Updateble {
 
@@ -46,7 +49,7 @@ class ShopListProductActivity : AppCompatActivity(), Removable, Updateble {
     private lateinit var listViewLV: ListView
     private lateinit var adapter: ListAdapter
 
-    private val products: MutableList<Product> = mutableListOf()
+    private var products: MutableList<Product> = mutableListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +89,8 @@ class ShopListProductActivity : AppCompatActivity(), Removable, Updateble {
             }
 
             if (photoUri == null) {
-
+                photoUri =
+                    Uri.parse("android.resource://${packageName}/${R.drawable.ic_unknown_product}")
             }
 
             val product = Product(
@@ -139,9 +143,23 @@ class ShopListProductActivity : AppCompatActivity(), Removable, Updateble {
         }
     }
 
+    private val launchSomeActivity = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ){ result ->
+        if (result.resultCode == RESULT_OK){
+            val data = result.data
+            isProductChange = data?.extras?.getBoolean("newCheck") ?: true
+            if (!isProductChange){
+                products = data?.extras?.getSerializable("list") as MutableList<Product>
+                adapter = ListAdapter(this, products)
+                isProductChange = true
+                listViewLV.adapter = adapter
+            }
+        }
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
-        toolbarMain.menu.findItem(R.id.exitMenuMain).setIcon(R.drawable.ic_exit_to_app)
         return true
     }
 
@@ -153,7 +171,7 @@ class ShopListProductActivity : AppCompatActivity(), Removable, Updateble {
                     "Работа завершена",
                     Toast.LENGTH_LONG
                 ).show()
-                finish()
+                exitProcess(0)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -164,11 +182,11 @@ class ShopListProductActivity : AppCompatActivity(), Removable, Updateble {
     }
 
     override fun update(product: Product) {
-        val intent = Intent(this, DetailsProductActivity::class.java)
-        intent.putExtra("product", product)
-//        intent.putExtra("products", this.products as ArrayList<Product>)
-//        intent.putExtra("position", item)
-//        intent.putExtra("check", isProductChange)
-        startActivity(intent)
+        var intentDetails: Intent = Intent(this, DetailsProductActivity::class.java)
+        intentDetails.putExtra("product", product)
+        intentDetails.putExtra("products", this.products as ArrayList<Product>)
+        intentDetails.putExtra("position", item)
+        intentDetails.putExtra("check", isProductChange)
+        launchSomeActivity.launch(intentDetails)
     }
 }

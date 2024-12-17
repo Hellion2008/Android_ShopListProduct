@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/backMenuMain"
+        android:orderInCategory="50"
+        android:title="@string/menu_text_back"
+        android:icon="@drawable/ic_back"
+        app:showAsAction="always"/>
+
+    <item
         android:id="@+id/exitMenuMain"
         android:orderInCategory="50"
         android:title="@string/exit"

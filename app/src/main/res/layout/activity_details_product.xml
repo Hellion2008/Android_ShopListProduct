@@ -48,4 +48,13 @@
         android:textSize="14dp"
         android:padding="12dp"
         android:hint="@string/hint_product_description_edit_text"/>
+
+    <Button
+        android:id="@+id/detailSaveBTN"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/name_text_save_button"
+        android:padding="12dp"
+        android:textSize="18dp"/>
+
 </LinearLayout>
